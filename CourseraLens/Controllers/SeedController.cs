@@ -48,7 +48,41 @@ public class SeedController : ControllerBase
         var now = DateTime.Now;
         var skippedRows = 0;
 
-        var records = csv.GetRecords<CourseRecord>();
+        // Phase 1: Process and save all new tags first to ensure they have IDs
+        var records = csv.GetRecords<CourseRecord>().ToList();
+        var newTags = new List<Tag>();
+
+        foreach (var record in records)
+        {
+            if (!string.IsNullOrEmpty(record.Tags))
+            {
+                foreach (var tagName in record.Tags
+                    .Split(';', StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.InvariantCultureIgnoreCase))
+                {
+                    if (!existingTags.ContainsKey(tagName))
+                    {
+                        var tag = new Tag
+                        {
+                            TagName = tagName,
+                            CreatedDate = now,
+                            LastModifiedDate = now
+                        };
+                        _context.Tags.Add(tag);
+                        newTags.Add(tag);
+                        existingTags.Add(tagName, tag);
+                    }
+                }
+            }
+        }
+
+        // Save new tags to generate IDs
+        if (newTags.Any())
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        // Phase 2: Process courses and their tag relationships
         foreach (var record in records)
         {
             if (!record.Id.HasValue ||
@@ -72,36 +106,31 @@ public class SeedController : ControllerBase
                 LastModifiedDate = now
             };
             _context.Courses.Add(course);
-
+            
+            // Save the course to ensure it has an ID
+            await _context.SaveChangesAsync();
+            
+            // Create course-tag relationships using IDs instead of entity references
             if (!string.IsNullOrEmpty(record.Tags))
+            {
                 foreach (var tagName in record.Tags
-                             .Split(';', StringSplitOptions.TrimEntries)
-                             .Distinct(
-                                 StringComparer.InvariantCultureIgnoreCase))
+                    .Split(';', StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.InvariantCultureIgnoreCase))
                 {
-                    if (!existingTags.TryGetValue(tagName,
-                            out var tag))
-                    {
-                        tag = new Tag
-                        {
-                            TagName = tagName,
-                            CreatedDate = now,
-                            LastModifiedDate = now
-                        };
-                        _context.Tags.Add(tag);
-                        existingTags.Add(tagName, tag);
-                    }
-
+                    var tag = existingTags[tagName];
+                    
                     _context.CoursesTags.Add(new CoursesTags
                     {
-                        Course = course,
-                        Tag = tag,
+                        CourseId = course.Id,
+                        TagId = tag.Id,
                         CreatedDate = now
                     });
                 }
+                
+                // Commit after processing each course's tags to prevent tracking conflicts
+                await _context.SaveChangesAsync();
+            }
         }
-
-        await _context.SaveChangesAsync();
 
         return new JsonResult(new
         {
