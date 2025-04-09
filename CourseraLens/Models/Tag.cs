@@ -1,16 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace CourseraLens.Models;
 
-[Table("CertsTypes")]
-public class CertType
+[Table("Tags")]
+public class Tag
 {
     [Key] [Required] public int Id { get; set; }
-    [Required] [MaxLength(50)] public string TypeName { get; set; } = null!;
+    [Required] [MaxLength(50)] public string TagName { get; set; } = null!;
     [Required] public DateTime CreatedDate { get; set; }
     [Required] public DateTime LastModifiedDate { get; set; }
 
-    public ICollection<CoursesCertTypes>? CoursesCertTypes { get; set; }
+    public ICollection<CoursesTags>? CoursesTags { get; set; }
 }
