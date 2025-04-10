@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Dynamic.Core;
+using CourseraLens.Attributes;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
-using CourseraLens.Attributes;
 
 namespace CourseraLens.Controllers;
 
@@ -27,7 +27,8 @@ public class CoursesController : ControllerBase
     public async Task<RestDto<Course[]>> Get(
         int pageIndex = 0,
         [Range(1, 100)] int pageSize = 10,
-        [SortColumnValidator(typeof(CourseDto))] string? sortColumn = "Title",
+        [SortColumnValidator(typeof(CourseDto))]
+        string? sortColumn = "Title",
         [SortOrderValidator] string? sortOrder = "ASC",
         string? filterQuery = null
     )
@@ -40,7 +41,7 @@ public class CoursesController : ControllerBase
             .OrderBy($"{sortColumn} {sortOrder}")
             .Skip(pageIndex * pageSize)
             .Take(pageSize);
-        
+
         return new RestDto<Course[]>
         {
             Data = await query.ToArrayAsync(),
@@ -55,7 +56,7 @@ public class CoursesController : ControllerBase
             }
         };
     }
-    
+
     [HttpPost(Name = "UpdateCourse")]
     [ResponseCache(NoStore = true)]
     public async Task<RestDto<Course?>> Post(CourseDto model)
@@ -70,28 +71,30 @@ public class CoursesController : ControllerBase
             if (model.StudentsEnrolled is > 0)
                 course.StudentsEnrolled = model.StudentsEnrolled.Value;
             course.LastModifiedDate = DateTime.Now;
-            
+
             _context.Courses.Update(course);
             await _context.SaveChangesAsync();
-        };
-        return new RestDto<Course?>()
+        }
+
+        ;
+        return new RestDto<Course?>
         {
             Data = course,
             Links = new List<LinkDto>
             {
-                new LinkDto(
+                new(
                     Url.Action(
                         null,
                         "Courses",
                         model,
                         Request.Scheme)!,
                     "self",
-                    "POST"),
+                    "POST")
             }
         };
     }
-    
-    [HttpDelete("Name = DeleteCourse")]
+
+    [HttpDelete(Name ="DeleteCourse")]
     [ResponseCache(NoStore = true)]
     public async Task<RestDto<Course?>> Delete(int id)
     {
@@ -103,19 +106,20 @@ public class CoursesController : ControllerBase
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
         }
-        return new RestDto<Course?>()
+
+        return new RestDto<Course?>
         {
             Data = course,
             Links = new List<LinkDto>
             {
-                new LinkDto(
+                new(
                     Url.Action(
                         null,
                         "Courses",
                         new { id },
                         Request.Scheme)!,
                     "self",
-                    "DELETE"),
+                    "DELETE")
             }
         };
     }

@@ -4,11 +4,14 @@ namespace CourseraLens.Attributes;
 
 public class SortOrderValidatorAttribute : ValidationAttribute
 {
-    public string[] AllowedValues { get; set; } =
-        new[] { "ASC", "DESC" };
     public SortOrderValidatorAttribute()
-        : base("Value must be one of the following: {0}.") { }
-    
+        : base("Value must be one of the following: {0}.")
+    {
+    }
+
+    public string[] AllowedValues { get; set; } =
+        { "ASC", "DESC" };
+
     protected override ValidationResult? IsValid(
         object? value,
         ValidationContext validationContext)
@@ -17,7 +20,7 @@ public class SortOrderValidatorAttribute : ValidationAttribute
         if (!string.IsNullOrEmpty(strValue)
             && AllowedValues.Contains(strValue))
             return ValidationResult.Success;
-        
+
         return new ValidationResult(
             FormatErrorMessage(string.Join(",", AllowedValues))
         );

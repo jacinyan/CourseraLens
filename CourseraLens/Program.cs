@@ -1,4 +1,5 @@
 using CourseraLens.Models;
+using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // ===== Services =====
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.ParameterFilter<SortColumnFilter>();
+    options.ParameterFilter<SortOrderFilter>();
+});
 
 // Cors
 builder.Services.AddCors(options =>
