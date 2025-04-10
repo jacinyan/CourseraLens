@@ -1,8 +1,8 @@
-using System.Linq.Dynamic.Core;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace CourseraLens.Controllers;
 
@@ -26,18 +26,25 @@ public class CoursesController : ControllerBase
         int pageIndex = 0,
         int pageSize = 10,
         string? sortColumn = "Title",
-        string? sortOrder = "ASC"
+        string? sortOrder = "ASC",
+        string? filterQuery = null
     )
     {
-        var query = _context.Courses.OrderBy($"{sortColumn} {sortOrder}")
-            .Skip(pageIndex * pageSize).Take(pageSize);
-
+        var query = _context.Courses.AsQueryable();
+        if (!string.IsNullOrEmpty(filterQuery))
+            query = query.Where(b => b.Title.Contains(filterQuery));
+        var resultCount = await query.CountAsync();
+        query = query
+            .OrderBy($"{sortColumn} {sortOrder}")
+            .Skip(pageIndex * pageSize)
+            .Take(pageSize);
+        
         return new RestDto<Course[]>
         {
             Data = await query.ToArrayAsync(),
             PageIndex = pageIndex,
             PageSize = pageSize,
-            TotalCount = await _context.Courses.CountAsync(),
+            ResultCount = resultCount,
             Links = new List<LinkDto>
             {
                 new(
