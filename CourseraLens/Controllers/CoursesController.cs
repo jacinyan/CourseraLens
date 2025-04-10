@@ -21,16 +21,24 @@ public class CoursesController : ControllerBase
 
     [HttpGet(Name = "GetCourses")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
-    public async Task<RestDto<Course[]>> Get()
+    public async Task<RestDto<Course[]>> Get(
+        int pageIndex = 0,
+        int pageSize = 10
+    )
     {
-        var query = _context.Courses;
+        var query = _context.Courses.Skip(pageIndex * pageSize).Take(pageSize);
 
         return new RestDto<Course[]>
         {
             Data = await query.ToArrayAsync(),
+            PageIndex = pageIndex,
+            PageSize = pageSize,
+            TotalCount = await _context.Courses.CountAsync(),
             Links = new List<LinkDto>
             {
-               new LinkDto( Url.Action(null,"Courses", null, Request.Scheme)!, "self", "GET"),
+                new(
+                    Url.Action(null, "Courses", new { pageIndex, pageSize },
+                        Request.Scheme)!, "self", "GET")
             }
         };
     }
