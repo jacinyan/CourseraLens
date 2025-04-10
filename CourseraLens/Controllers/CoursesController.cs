@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -23,10 +24,13 @@ public class CoursesController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
     public async Task<RestDto<Course[]>> Get(
         int pageIndex = 0,
-        int pageSize = 10
+        int pageSize = 10,
+        string? sortColumn = "Title",
+        string? sortOrder = "ASC"
     )
     {
-        var query = _context.Courses.Skip(pageIndex * pageSize).Take(pageSize);
+        var query = _context.Courses.OrderBy($"{sortColumn} {sortOrder}")
+            .Skip(pageIndex * pageSize).Take(pageSize);
 
         return new RestDto<Course[]>
         {

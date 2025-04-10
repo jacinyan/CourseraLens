@@ -75,3 +75,4 @@
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/Debug/net7.0/CourseraLens.pdb
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/Debug/net7.0/CourseraLens.genruntimeconfig.cache
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/Debug/net7.0/ref/CourseraLens.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/System.Linq.Dynamic.Core.dll
