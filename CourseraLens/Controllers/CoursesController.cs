@@ -25,33 +25,28 @@ public class CoursesController : ControllerBase
     [HttpGet(Name = "GetCourses")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
     public async Task<RestDto<Course[]>> Get(
-        int pageIndex = 0,
-        [Range(1, 100)] int pageSize = 10,
-        [SortColumnValidator(typeof(CourseDto))]
-        string? sortColumn = "Title",
-        [SortOrderValidator] string? sortOrder = "ASC",
-        string? filterQuery = null
+            [FromQuery] RequestDto<CourseDto> input
     )
     {
         var query = _context.Courses.AsQueryable();
-        if (!string.IsNullOrEmpty(filterQuery))
-            query = query.Where(b => b.Title.Contains(filterQuery));
+        if (!string.IsNullOrEmpty(input.FilterQuery))
+            query = query.Where(b => b.Title.Contains(input.FilterQuery));
         var resultCount = await query.CountAsync();
         query = query
-            .OrderBy($"{sortColumn} {sortOrder}")
-            .Skip(pageIndex * pageSize)
-            .Take(pageSize);
+            .OrderBy($"{input.SortColumn} {input.SortOrder}")
+            .Skip(input.PageIndex * input.PageSize)
+            .Take(input.PageSize);
 
         return new RestDto<Course[]>
         {
             Data = await query.ToArrayAsync(),
-            PageIndex = pageIndex,
-            PageSize = pageSize,
+            PageIndex =input.PageIndex,
+            PageSize =input.PageSize,
             ResultCount = resultCount,
             Links = new List<LinkDto>
             {
                 new(
-                    Url.Action(null, "Courses", new { pageIndex, pageSize },
+                    Url.Action(null, "Courses", new { input.PageIndex, input.PageSize },
                         Request.Scheme)!, "self", "GET")
             }
         };
