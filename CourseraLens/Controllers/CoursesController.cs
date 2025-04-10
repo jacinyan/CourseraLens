@@ -53,4 +53,68 @@ public class CoursesController : ControllerBase
             }
         };
     }
+    
+    [HttpPost(Name = "UpdateCourse")]
+    [ResponseCache(NoStore = true)]
+    public async Task<RestDto<Course?>> Post(CourseDto model)
+    {
+        var course = await _context.Courses
+            .Where(b => b.Id == model.Id)
+            .FirstOrDefaultAsync();
+        if (course != null)
+        {
+            if (!string.IsNullOrEmpty(model.Title))
+                course.Title = model.Title;
+            if (model.StudentsEnrolled is > 0)
+                course.StudentsEnrolled = model.StudentsEnrolled.Value;
+            course.LastModifiedDate = DateTime.Now;
+            
+            _context.Courses.Update(course);
+            await _context.SaveChangesAsync();
+        };
+        return new RestDto<Course?>()
+        {
+            Data = course,
+            Links = new List<LinkDto>
+            {
+                new LinkDto(
+                    Url.Action(
+                        null,
+                        "Courses",
+                        model,
+                        Request.Scheme)!,
+                    "self",
+                    "POST"),
+            }
+        };
+    }
+    
+    [HttpDelete("Name = DeleteCourse")]
+    [ResponseCache(NoStore = true)]
+    public async Task<RestDto<Course?>> Delete(int id)
+    {
+        var course = await _context.Courses
+            .Where(b => b.Id == id)
+            .FirstOrDefaultAsync();
+        if (course != null)
+        {
+            _context.Courses.Remove(course);
+            await _context.SaveChangesAsync();
+        }
+        return new RestDto<Course?>()
+        {
+            Data = course,
+            Links = new List<LinkDto>
+            {
+                new LinkDto(
+                    Url.Action(
+                        null,
+                        "Courses",
+                        new { id },
+                        Request.Scheme)!,
+                    "self",
+                    "DELETE"),
+            }
+        };
+    }
 }
