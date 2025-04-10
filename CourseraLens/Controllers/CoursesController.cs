@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using CourseraLens.Attributes;
 
 namespace CourseraLens.Controllers;
 
@@ -24,9 +26,9 @@ public class CoursesController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
     public async Task<RestDto<Course[]>> Get(
         int pageIndex = 0,
-        int pageSize = 10,
-        string? sortColumn = "Title",
-        string? sortOrder = "ASC",
+        [Range(1, 100)] int pageSize = 10,
+        [SortColumnValidator(typeof(CourseDto))] string? sortColumn = "Title",
+        [SortOrderValidator] string? sortOrder = "ASC",
         string? filterQuery = null
     )
     {
