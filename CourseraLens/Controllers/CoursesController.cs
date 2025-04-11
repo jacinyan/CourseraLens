@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Dynamic.Core;
-using CourseraLens.Attributes;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +23,7 @@ public class CoursesController : ControllerBase
     [HttpGet(Name = "GetCourses")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
     public async Task<RestDto<Course[]>> Get(
-            [FromQuery] RequestDto<CourseDto> input
+        [FromQuery] RequestDto<CourseDto> input
     )
     {
         var query = _context.Courses.AsQueryable();
@@ -40,13 +38,14 @@ public class CoursesController : ControllerBase
         return new RestDto<Course[]>
         {
             Data = await query.ToArrayAsync(),
-            PageIndex =input.PageIndex,
-            PageSize =input.PageSize,
+            PageIndex = input.PageIndex,
+            PageSize = input.PageSize,
             ResultCount = resultCount,
             Links = new List<LinkDto>
             {
                 new(
-                    Url.Action(null, "Courses", new { input.PageIndex, input.PageSize },
+                    Url.Action(null, "Courses",
+                        new { input.PageIndex, input.PageSize },
                         Request.Scheme)!, "self", "GET")
             }
         };
@@ -88,7 +87,7 @@ public class CoursesController : ControllerBase
         };
     }
 
-    [HttpDelete(Name ="DeleteCourse")]
+    [HttpDelete(Name = "DeleteCourse")]
     [ResponseCache(NoStore = true)]
     public async Task<RestDto<Course?>> Delete(int id)
     {

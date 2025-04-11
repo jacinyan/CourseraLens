@@ -1,21 +1,24 @@
 using CourseraLens.Models;
 using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== Services =====
-builder.Services.AddControllers(options => {
+// Check at Model binding
+builder.Services.AddControllers(options =>
+{
     options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(
-        (x) => $"The value '{x}' is invalid.");
+        x => $"The value '{x}' is invalid.");
     options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(
-        (x) => $"The field {x} must be a number.");
+        x => $"The field {x} must be a number.");
     options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor(
         (x, y) => $"The value '{x}' is not valid for {y}.");
     options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(
-        () => $"A value is required.");
+        () => "A value is required.");
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -50,7 +53,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// Suppress ModelState Invalid Filter
+// Suppress ModelState invalid filter globally
 // builder.Services.Configure<ApiBehaviorOptions>(options =>
 //     options.SuppressModelStateInvalidFilter = true);
 
@@ -68,6 +71,24 @@ if (app.Configuration.GetValue<bool>("UseDeveloperExceptionPage"))
     app.UseDeveloperExceptionPage();
 else
     app.UseExceptionHandler("/error");
+//app.UseExceptionHandler(action => {
+//    action.Run(async context =>
+//    {
+//        var exceptionHandler =
+//            context.Features.Get<IExceptionHandlerPathFeature>();
+
+//        var details = new ProblemDetails();
+//        details.Detail = exceptionHandler?.Error.Message;
+//        details.Extensions["traceId"] =
+//            System.Diagnostics.Activity.Current?.Id 
+//              ?? context.TraceIdentifier;
+//        details.Type =
+//            "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+//        details.Status = StatusCodes.Status500InternalServerError;
+//        await context.Response.WriteAsync(
+//            System.Text.Json.JsonSerializer.Serialize(details));
+//    });
+//});
 
 app.UseHttpsRedirection();
 app.UseCors();
@@ -76,8 +97,27 @@ app.UseAuthorization();
 // ===== Endpoints  =====
 app.MapGet("/error",
     [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)]
-    () =>
-        Results.Problem());
+    (HttpContext context) =>
+    {
+        var exceptionHandler =
+            context.Features.Get<IExceptionHandlerPathFeature>();
+        // TODO: logging, sending notifications, and more
+        
+        var details = new ProblemDetails
+        {   
+            Detail = exceptionHandler?.Error.Message,
+            Extensions = { ["traceid"] = System.Diagnostics.Activity.Current?.Id
+                                         ?? context.TraceIdentifier  },
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+            Status = StatusCodes.Status500InternalServerError
+        };
+        
+        return Results.Problem(details);
+    });
+app.MapGet("/error/test",
+    [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)]
+    () => { throw new Exception("test"); }
+);
 app.MapControllers();
 
 app.Run();

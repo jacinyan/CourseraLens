@@ -6,7 +6,8 @@ namespace CourseraLens.Swagger;
 
 public class SortColumnFilter : IParameterFilter
 {
-    public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
+    public void Apply(OpenApiParameter parameter,
+        ParameterFilterContext context)
     {
         // ATTENTION: This is a temporary placeholder filter
         // Currently NON-FUNCTIONAL for SortColumn validation because:
@@ -21,7 +22,9 @@ public class SortColumnFilter : IParameterFilter
         // Standard pattern for checking property-level attributes (in DTOs)
         var propAttributes = context.ParameterInfo.ParameterType
             .GetProperties()
-            .Where(p => p.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase))
+            .Where(p =>
+                p.Name.Equals(parameter.Name,
+                    StringComparison.OrdinalIgnoreCase))
             .SelectMany(p => p.GetCustomAttributes(true))
             .OfType<SortColumnValidatorAttribute>(); // Will always be empty
 
@@ -30,10 +33,8 @@ public class SortColumnFilter : IParameterFilter
 
         // NOTE: This block will NEVER execute currently
         if (attributes.Any())
-        {
             // Reserved space for future implementation
-            parameter.Description = "Sort column for the target entity (WIP)"; 
-        }
+            parameter.Description = "Sort column for the target entity (WIP)";
 
         // TEMPORARY WORKAROUND: 
         // For now, this filter exists only to maintain code consistency

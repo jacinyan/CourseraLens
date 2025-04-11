@@ -7,6 +7,7 @@ public class SortOrderValidatorAttribute : ValidationAttribute
     public SortOrderValidatorAttribute()
         : base("Value must be one of the following: {0}.")
     {
+        // Check at Mode validation
     }
 
     public string[] AllowedValues { get; set; } =

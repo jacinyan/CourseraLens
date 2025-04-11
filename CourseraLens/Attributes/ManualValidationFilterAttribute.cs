@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace CourseraLens.Attributes;
 
-public class ManualValidationFilterAttribute: Attribute, IActionModelConvention
+public class ManualValidationFilterAttribute : Attribute, IActionModelConvention
 {
     public void Apply(ActionModel action)
     {
         for (var i = 0; i < action.Filters.Count; i++)
-        {
             if (action.Filters[i] is ModelStateInvalidFilter
                 || action.Filters[i].GetType().Name ==
                 "ModelStateInvalidFilterFactory")
@@ -16,6 +15,5 @@ public class ManualValidationFilterAttribute: Attribute, IActionModelConvention
                 action.Filters.RemoveAt(i);
                 break;
             }
-        }
-    } 
+    }
 }
