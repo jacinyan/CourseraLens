@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Dynamic.Core;
-using CourseraLens.Attributes;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,34 +8,34 @@ namespace CourseraLens.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class CoursesController : ControllerBase
+public class TagsController: ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CoursesController> _logger;
-
-    public CoursesController(ApplicationDbContext context,
+    
+    public TagsController(ApplicationDbContext context,
         ILogger<CoursesController> logger)
     {
         _context = context;
         _logger = logger;
     }
-
-    [HttpGet(Name = "GetCourses")]
+    
+    [HttpGet(Name = "GetTags")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
-    public async Task<RestDto<Course[]>> Get(
-            [FromQuery] RequestDto<CourseDto> input
+    public async Task<RestDto<Tag[]>> Get(
+        [FromQuery] RequestDto<TagDto> input
     )
     {
-        var query = _context.Courses.AsQueryable();
+        var query = _context.Tags.AsQueryable();
         if (!string.IsNullOrEmpty(input.FilterQuery))
-            query = query.Where(b => b.Title.Contains(input.FilterQuery));
+            query = query.Where(b => b.TagName.Contains(input.FilterQuery));
         var resultCount = await query.CountAsync();
         query = query
             .OrderBy($"{input.SortColumn} {input.SortOrder}")
             .Skip(input.PageIndex * input.PageSize)
             .Take(input.PageSize);
 
-        return new RestDto<Course[]>
+        return new RestDto<Tag[]>
         {
             Data = await query.ToArrayAsync(),
             PageIndex =input.PageIndex,
@@ -46,40 +44,38 @@ public class CoursesController : ControllerBase
             Links = new List<LinkDto>
             {
                 new(
-                    Url.Action(null, "Courses", new { input.PageIndex, input.PageSize },
+                    Url.Action(null, "Tags", new { input.PageIndex, input.PageSize },
                         Request.Scheme)!, "self", "GET")
             }
         };
     }
-
-    [HttpPost(Name = "UpdateCourse")]
+    
+    [HttpPost(Name = "UpdateTag")]
     [ResponseCache(NoStore = true)]
-    public async Task<RestDto<Course?>> Post(CourseDto model)
+    public async Task<RestDto<Tag?>> Post(TagDto model)
     {
-        var course = await _context.Courses
+        var tag = await _context.Tags
             .Where(b => b.Id == model.Id)
             .FirstOrDefaultAsync();
-        if (course != null)
+        if (tag != null)
         {
-            if (!string.IsNullOrEmpty(model.Title))
-                course.Title = model.Title;
-            if (model.StudentsEnrolled is > 0)
-                course.StudentsEnrolled = model.StudentsEnrolled.Value;
-            course.LastModifiedDate = DateTime.Now;
-
-            _context.Courses.Update(course);
+            if (!string.IsNullOrEmpty(model.TagName))
+                tag.TagName = model.TagName;
+            tag.LastModifiedDate = DateTime.Now;
+            
+            _context.Tags.Update(tag);  
             await _context.SaveChangesAsync();
         }
-
-        return new RestDto<Course?>
+       
+        return new RestDto<Tag?>
         {
-            Data = course,
+            Data = tag,
             Links = new List<LinkDto>
             {
                 new(
                     Url.Action(
                         null,
-                        "Courses",
+                        "Tags",
                         model,
                         Request.Scheme)!,
                     "self",
@@ -87,29 +83,29 @@ public class CoursesController : ControllerBase
             }
         };
     }
-
-    [HttpDelete(Name ="DeleteCourse")]
+    
+    [HttpDelete(Name = "DeleteTag")]
     [ResponseCache(NoStore = true)]
-    public async Task<RestDto<Course?>> Delete(int id)
+    public async Task<RestDto<Tag?>> Delete(int id)
     {
-        var course = await _context.Courses
+        var tag = await _context.Tags
             .Where(b => b.Id == id)
             .FirstOrDefaultAsync();
-        if (course != null)
+        if (tag != null)
         {
-            _context.Courses.Remove(course);
+            _context.Tags.Remove(tag);
             await _context.SaveChangesAsync();
         }
-
-        return new RestDto<Course?>
+        
+        return new RestDto<Tag?>
         {
-            Data = course,
+            Data = tag,
             Links = new List<LinkDto>
             {
                 new(
                     Url.Action(
                         null,
-                        "Courses",
+                        "Tags",
                         new { id },
                         Request.Scheme)!,
                     "self",
