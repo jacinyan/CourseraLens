@@ -38,7 +38,14 @@ public class CoursesController : ControllerBase
         var resultCount = await query.CountAsync();
 
         Course[]? result = null;
-        var cacheKey = $"{input.GetType()} - {JsonSerializer.Serialize(input)}";
+        var cacheKey = $"{input.GetType().Name}-{JsonSerializer.Serialize(new
+        {
+            input.PageIndex,
+            input.PageSize,
+            input.SortColumn,
+            input.SortOrder,
+            input.FilterQuery
+        }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })}";
         // See extension method
         if (!_distributedCache.TryGetValue<Course[]>(cacheKey, out result))
         {
