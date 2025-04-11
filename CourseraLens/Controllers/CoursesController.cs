@@ -1,8 +1,10 @@
 using System.Linq.Dynamic.Core;
+using System.Text.Json;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CourseraLens.Controllers;
 
@@ -12,12 +14,15 @@ public class CoursesController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CoursesController> _logger;
+    private readonly IMemoryCache _memoryCache;
 
     public CoursesController(ApplicationDbContext context,
-        ILogger<CoursesController> logger)
+        ILogger<CoursesController> logger,
+        IMemoryCache memoryCache)
     {
         _context = context;
         _logger = logger;
+        _memoryCache = memoryCache;
     }
 
     [HttpGet(Name = "GetCourses")]
@@ -30,14 +35,23 @@ public class CoursesController : ControllerBase
         if (!string.IsNullOrEmpty(input.FilterQuery))
             query = query.Where(b => b.Title.Contains(input.FilterQuery));
         var resultCount = await query.CountAsync();
-        query = query
-            .OrderBy($"{input.SortColumn} {input.SortOrder}")
-            .Skip(input.PageIndex * input.PageSize)
-            .Take(input.PageSize);
 
+        Course[]? result = null;
+        var cacheKey = $"{input.GetType()} - {JsonSerializer.Serialize(input)}";
+        if (!_memoryCache.TryGetValue<Course[]>(cacheKey, out result))
+        {
+            query = query
+                .OrderBy($"{input.SortColumn} {input.SortOrder}")
+                .Skip(input.PageIndex * input.PageSize)
+                .Take(input.PageSize); 
+            
+            result = await query.ToArrayAsync();
+            _memoryCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
+        }
+        
         return new RestDto<Course[]>
         {
-            Data = await query.ToArrayAsync(),
+            Data = result,
             PageIndex = input.PageIndex,
             PageSize = input.PageSize,
             ResultCount = resultCount,

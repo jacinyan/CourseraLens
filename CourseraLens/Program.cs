@@ -77,6 +77,8 @@ builder.Services.AddResponseCaching(
     }
 );
 
+builder.Services.AddMemoryCache();
+
 // ===== Build =====
 var app = builder.Build();
 
