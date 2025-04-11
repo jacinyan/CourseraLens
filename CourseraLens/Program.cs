@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CourseraLens.Models;
 using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Cors;
@@ -19,15 +20,15 @@ builder.Services.AddControllers(options =>
         (x, y) => $"The value '{x}' is not valid for {y}.");
     options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(
         () => "A value is required.");
-    
-    options.CacheProfiles.Add("NoCache", 
-    new CacheProfile() { NoStore = true });
-    options.CacheProfiles.Add("Any-60", 
-    new CacheProfile()
-    {
-        Location = ResponseCacheLocation.Any,
-        Duration = 60
-    });
+
+    options.CacheProfiles.Add("NoCache",
+        new CacheProfile { NoStore = true });
+    options.CacheProfiles.Add("Any-60",
+        new CacheProfile
+        {
+            Location = ResponseCacheLocation.Any,
+            Duration = 60
+        });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -66,6 +67,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // builder.Services.Configure<ApiBehaviorOptions>(options =>
 //     options.SuppressModelStateInvalidFilter = true);
 
+// Server-side caching
+builder.Services.AddResponseCaching(
+    options =>
+    {
+        // Prevent memory shortage
+        options.MaximumBodySize = 32 * 1024 * 1024;
+        options.SizeLimit = 50 * 1024 * 1024;
+    }
+);
+
 // ===== Build =====
 var app = builder.Build();
 
@@ -101,12 +112,13 @@ else
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseResponseCaching();
 app.UseAuthorization();
 
 // Custom middleware
-app.Use((context, next) => 
-{   
-    // A default cache-control directive when Cache-Profile is not present (globally)
+app.Use((context, next) =>
+{
+    // A default cache-control directive when Cache-Profile is not present (although global, not to replace standard cache settings) 
     context.Response.Headers["cache-control"] =
         "no-cache, no-store";
     return next.Invoke();
@@ -120,16 +132,19 @@ app.MapGet("/error",
         var exceptionHandler =
             context.Features.Get<IExceptionHandlerPathFeature>();
         // TODO: logging, sending notifications, and more
-        
+
         var details = new ProblemDetails
-        {   
+        {
             Detail = exceptionHandler?.Error.Message,
-            Extensions = { ["traceid"] = System.Diagnostics.Activity.Current?.Id
-                                         ?? context.TraceIdentifier  },
+            Extensions =
+            {
+                ["traceid"] = Activity.Current?.Id
+                              ?? context.TraceIdentifier
+            },
             Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
             Status = StatusCodes.Status500InternalServerError
         };
-        
+
         return Results.Problem(details);
     });
 app.MapGet("/error/test",
