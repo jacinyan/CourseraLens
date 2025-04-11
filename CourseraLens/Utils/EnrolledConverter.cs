@@ -22,8 +22,22 @@ public class EnrolledConverter : ITypeConverter
                     CultureInfo.InvariantCulture, out var result))
                 return (int)(result * 1000);
         }
+        else if (text.EndsWith("m"))
+        {
+            var value = text[..^1];
+            if (double.TryParse(value, NumberStyles.Any,
+                    CultureInfo.InvariantCulture, out var result))
+                return (int)(result * 1000000);
+        }
+        else if (text.EndsWith("b"))
+        {
+            var value = text[..^1];
+            if (double.TryParse(value, NumberStyles.Any,
+                    CultureInfo.InvariantCulture, out var result))
+                return (int)(result * 1000000000);
+        }
 
-        // If it's not in the "k" format, just try to parse it as a normal integer
+        // If it's not in the "k", "m" or "b" format, just try to parse it as a normal integer
         if (int.TryParse(text, out var intValue)) return intValue;
 
         return null;
