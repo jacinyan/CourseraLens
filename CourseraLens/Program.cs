@@ -67,7 +67,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // builder.Services.Configure<ApiBehaviorOptions>(options =>
 //     options.SuppressModelStateInvalidFilter = true);
 
-// Server-side caching
+// Response caching
 builder.Services.AddResponseCaching(
     options =>
     {
@@ -76,8 +76,14 @@ builder.Services.AddResponseCaching(
         options.SizeLimit = 50 * 1024 * 1024;
     }
 );
-
+// In-memory cache
 builder.Services.AddMemoryCache();
+// Redis
+builder.Services.AddStackExchangeRedisCache(options => 
+{
+    options.Configuration =
+        builder.Configuration["Redis:ConnectionString"]; 
+});
 
 // ===== Build =====
 var app = builder.Build();

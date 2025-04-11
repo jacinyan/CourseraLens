@@ -76,3 +76,12 @@
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/Debug/net7.0/CourseraLens.pdb
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/Debug/net7.0/CourseraLens.genruntimeconfig.cache
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/Debug/net7.0/ref/CourseraLens.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Caching.Abstractions.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Caching.StackExchangeRedis.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Logging.Abstractions.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Options.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Primitives.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Pipelines.Sockets.Unofficial.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/StackExchange.Redis.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/System.Diagnostics.DiagnosticSource.dll

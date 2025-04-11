@@ -1,10 +1,11 @@
 using System.Linq.Dynamic.Core;
 using System.Text.Json;
 using CourseraLens.DTO;
+using CourseraLens.Extensions;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace CourseraLens.Controllers;
 
@@ -14,15 +15,15 @@ public class CoursesController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CoursesController> _logger;
-    private readonly IMemoryCache _memoryCache;
+    private readonly IDistributedCache _distributedCache;
 
     public CoursesController(ApplicationDbContext context,
         ILogger<CoursesController> logger,
-        IMemoryCache memoryCache)
+        IDistributedCache distributedCache)
     {
         _context = context;
         _logger = logger;
-        _memoryCache = memoryCache;
+        _distributedCache = distributedCache;
     }
 
     [HttpGet(Name = "GetCourses")]
@@ -38,7 +39,8 @@ public class CoursesController : ControllerBase
 
         Course[]? result = null;
         var cacheKey = $"{input.GetType()} - {JsonSerializer.Serialize(input)}";
-        if (!_memoryCache.TryGetValue<Course[]>(cacheKey, out result))
+        // See extension method
+        if (!_distributedCache.TryGetValue<Course[]>(cacheKey, out result))
         {
             query = query
                 .OrderBy($"{input.SortColumn} {input.SortOrder}")
@@ -46,7 +48,7 @@ public class CoursesController : ControllerBase
                 .Take(input.PageSize); 
             
             result = await query.ToArrayAsync();
-            _memoryCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
+            _distributedCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
         }
         
         return new RestDto<Course[]>
