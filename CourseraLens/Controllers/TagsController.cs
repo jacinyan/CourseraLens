@@ -1,4 +1,5 @@
 using System.Linq.Dynamic.Core;
+using CourseraLens.Attributes;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,36 @@ public class TagsController: ControllerBase
     
     [HttpGet(Name = "GetTags")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
-    public async Task<RestDto<Tag[]>> Get(
+    [ManualValidationFilter]
+    public async Task<ActionResult<RestDto<Tag[]>>> Get(
         [FromQuery] RequestDto<TagDto> input
     )
-    {
+    {   
+        // Customize ModelState 
+        if (!ModelState.IsValid) 
+        {
+            var details = new ValidationProblemDetails(ModelState);
+            details.Extensions["traceId"] =
+                System.Diagnostics.Activity.Current?.Id
+                ?? HttpContext.TraceIdentifier;
+            if (ModelState.Keys.Any(k => k == "PageSize"))
+            {
+                details.Type =
+                    "https://tools.ietf.org/html/rfc7231#section-6.6.2";
+                details.Status = StatusCodes.Status501NotImplemented;
+                return new ObjectResult(details) {
+                    StatusCode = StatusCodes.Status501NotImplemented
+                };
+            }
+            else
+            {
+                details.Type =
+                    "https://tools.ietf.org/html/rfc7231#section-6.5.1";
+                details.Status = StatusCodes.Status400BadRequest;
+                return new BadRequestObjectResult(details);
+            }
+        }
+        
         var query = _context.Tags.AsQueryable();
         if (!string.IsNullOrEmpty(input.FilterQuery))
             query = query.Where(b => b.TagName.Contains(input.FilterQuery));

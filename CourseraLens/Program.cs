@@ -51,8 +51,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 );
 
 // Suppress ModelState Invalid Filter
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-    options.SuppressModelStateInvalidFilter = true);
+// builder.Services.Configure<ApiBehaviorOptions>(options =>
+//     options.SuppressModelStateInvalidFilter = true);
 
 // ===== Build =====
 var app = builder.Build();
