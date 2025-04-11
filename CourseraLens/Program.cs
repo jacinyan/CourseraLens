@@ -19,6 +19,15 @@ builder.Services.AddControllers(options =>
         (x, y) => $"The value '{x}' is not valid for {y}.");
     options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(
         () => "A value is required.");
+    
+    options.CacheProfiles.Add("NoCache", 
+    new CacheProfile() { NoStore = true });
+    options.CacheProfiles.Add("Any-60", 
+    new CacheProfile()
+    {
+        Location = ResponseCacheLocation.Any,
+        Duration = 60
+    });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -60,7 +69,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // ===== Build =====
 var app = builder.Build();
 
-// Middleware
+// Built-in Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -94,6 +103,15 @@ app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthorization();
 
+// Custom middleware
+app.Use((context, next) => 
+{   
+    // A default cache-control directive when Cache-Profile is not present (globally)
+    context.Response.Headers["cache-control"] =
+        "no-cache, no-store";
+    return next.Invoke();
+});
+
 // ===== Endpoints  =====
 app.MapGet("/error",
     [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)]
@@ -118,6 +136,25 @@ app.MapGet("/error/test",
     [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)]
     () => { throw new Exception("test"); }
 );
+// app.MapGet("/cache/test/1",
+//     [EnableCors("AnyOrigin")]
+//     (HttpContext context) =>
+//     {
+//         context.Response.GetTypedHeaders().CacheControl = 
+//         new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+//         {
+//             NoCache = true, 
+//             NoStore = true 
+//         }; 
+//         return Results.Ok();
+//     });
+
+// app.MapGet("/cache/test/2",
+//     [EnableCors("AnyOrigin")]
+//     (HttpContext context) =>
+//     {
+//         return Results.Ok();
+//     });
 app.MapControllers();
 
 app.Run();

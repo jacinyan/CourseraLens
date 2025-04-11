@@ -23,7 +23,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet(Name = "GetTags")]
-    [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
+    [ResponseCache(CacheProfileName = "Any-60")]
     [ManualValidationFilter]
     public async Task<ActionResult<RestDto<Tag[]>>> Get(
         [FromQuery] RequestDto<TagDto> input
@@ -79,7 +79,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpPost(Name = "UpdateTag")]
-    [ResponseCache(NoStore = true)]
+    [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Tag?>> Post(TagDto model)
     {
         var tag = await _context.Tags
@@ -113,7 +113,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpDelete(Name = "DeleteTag")]
-    [ResponseCache(NoStore = true)]
+    [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Tag?>> Delete(int id)
     {
         var tag = await _context.Tags

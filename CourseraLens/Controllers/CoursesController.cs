@@ -21,7 +21,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet(Name = "GetCourses")]
-    [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
+    [ResponseCache(CacheProfileName = "Any-60")]
     public async Task<RestDto<Course[]>> Get(
         [FromQuery] RequestDto<CourseDto> input
     )
@@ -52,7 +52,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost(Name = "UpdateCourse")]
-    [ResponseCache(NoStore = true)]
+    [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Course?>> Post(CourseDto model)
     {
         var course = await _context.Courses
@@ -88,7 +88,7 @@ public class CoursesController : ControllerBase
     }
 
     [HttpDelete(Name = "DeleteCourse")]
-    [ResponseCache(NoStore = true)]
+    [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Course?>> Delete(int id)
     {
         var course = await _context.Courses

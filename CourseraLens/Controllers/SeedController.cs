@@ -27,7 +27,7 @@ public class SeedController : ControllerBase
     }
 
     [HttpPut(Name = "Seed")]
-    [ResponseCache(NoStore = true)]
+    [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<IActionResult> Put()
     {
         var config = new CsvConfiguration(CultureInfo.GetCultureInfo("en-AU"))
