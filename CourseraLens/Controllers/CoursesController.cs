@@ -28,7 +28,7 @@ public class CoursesController : ControllerBase
 
     [HttpGet(Name = "GetCourses")]
     [ResponseCache(CacheProfileName = "Any-60")]
-    public async Task<RestDto<Course[]>> Get(
+    public async Task<RestDto<Course[]?>> Get(
         [FromQuery] RequestDto<CourseDto> input
     )
     {
@@ -37,7 +37,6 @@ public class CoursesController : ControllerBase
             query = query.Where(b => b.Title.Contains(input.FilterQuery));
         var resultCount = await query.CountAsync();
 
-        Course[]? result = null;
         var cacheKey = $"{input.GetType().Name}-{JsonSerializer.Serialize(new
         {
             input.PageIndex,
@@ -47,7 +46,7 @@ public class CoursesController : ControllerBase
             input.FilterQuery
         }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })}";
         // See extension method
-        if (!_distributedCache.TryGetValue(cacheKey, out result))
+        if (!_distributedCache.TryGetValue(cacheKey, out Course[]? result))
         {
             query = query
                 .OrderBy($"{input.SortColumn} {input.SortOrder}")
@@ -58,7 +57,7 @@ public class CoursesController : ControllerBase
             _distributedCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
         }
 
-        return new RestDto<Course[]>
+        return new RestDto<Course[]?>
         {
             Data = result,
             PageIndex = input.PageIndex,

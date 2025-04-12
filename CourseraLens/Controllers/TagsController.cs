@@ -58,7 +58,6 @@ public class TagsController : ControllerBase
             query = query.Where(b => b.TagName.Contains(input.FilterQuery));
         var resultCount = await query.CountAsync();
 
-        Tag[]? result = null;
         var cacheKey = $"{input.GetType().Name}-{JsonSerializer.Serialize(new
         {
             input.PageIndex,
@@ -67,18 +66,32 @@ public class TagsController : ControllerBase
             input.SortOrder,
             input.FilterQuery
         }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })}";
-        if (!_memoryCache.TryGetValue(cacheKey, out result))
-        {
-            query = query
-                .OrderBy($"{input.SortColumn} {input.SortOrder}")
-                .Skip(input.PageIndex * input.PageSize)
-                .Take(input.PageSize);
+        if (_memoryCache.TryGetValue(cacheKey, out Tag[]? result))
+            return new RestDto<Tag[]?>
+            {
+                Data = result,
+                PageIndex = input.PageIndex,
+                PageSize = input.PageSize,
+                ResultCount = resultCount,
+                Links = new List<LinkDto>
+                {
+                    new(
+                        Url.Action(null, "Tags",
+                            new { input.PageIndex, input.PageSize },
+                            Request.Scheme)!,
+                        "self",
+                        "GET")
+                }
+            };
+        query = query
+            .OrderBy($"{input.SortColumn} {input.SortOrder}")
+            .Skip(input.PageIndex * input.PageSize)
+            .Take(input.PageSize);
 
-            result = await query.ToArrayAsync();
-            _memoryCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
-        }
+        result = await query.ToArrayAsync();
+        _memoryCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
 
-        return new RestDto<Tag[]>
+        return new RestDto<Tag[]?>
         {
             Data = result,
             PageIndex = input.PageIndex,
