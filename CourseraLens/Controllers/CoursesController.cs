@@ -3,6 +3,7 @@ using System.Text.Json;
 using CourseraLens.DTO;
 using CourseraLens.Extensions;
 using CourseraLens.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -25,7 +26,7 @@ public class CoursesController : ControllerBase
         _logger = logger;
         _distributedCache = distributedCache;
     }
-
+    
     [HttpGet(Name = "GetCourses")]
     [ResponseCache(CacheProfileName = "Any-60")]
     public async Task<RestDto<Course[]?>> Get(
@@ -72,7 +73,8 @@ public class CoursesController : ControllerBase
             }
         };
     }
-
+    
+    [Authorize]
     [HttpPost(Name = "UpdateCourse")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Course?>> Post(CourseDto model)
@@ -108,7 +110,8 @@ public class CoursesController : ControllerBase
             }
         };
     }
-
+    
+    [Authorize]
     [HttpDelete(Name = "DeleteCourse")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Course?>> Delete(int id)

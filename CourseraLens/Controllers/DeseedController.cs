@@ -1,9 +1,11 @@
 using CourseraLens.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseraLens.Controllers;
 
+[Authorize]
 [Route("[controller]")]
 [ApiController]
 public class DeseedController : ControllerBase
@@ -18,6 +20,7 @@ public class DeseedController : ControllerBase
         _context = context;
         _logger = logger;
     }
+    
 
     [HttpDelete]
     public async Task<IActionResult> DeseedDatabase()

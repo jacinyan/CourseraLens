@@ -3,11 +3,13 @@ using CourseraLens.Models;
 using CourseraLens.Models.CSV;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseraLens.Controllers;
 
+[Authorize]
 [Route("[controller]")]
 [ApiController]
 public class SeedController : ControllerBase
@@ -25,6 +27,7 @@ public class SeedController : ControllerBase
         _env = env;
         _logger = logger;
     }
+    
 
     [HttpPut(Name = "Seed")]
     [ResponseCache(CacheProfileName = "NoCache")]

@@ -3,6 +3,7 @@ using System.Text;
 using CourseraLens.Models;
 using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
@@ -247,6 +248,10 @@ app.MapGet("/error/test",
 //     {
 //         return Results.Ok();
 //     });
+app.MapGet("/auth/test/1",
+    [Authorize]
+    [EnableCors("AnyOrigin")]
+    [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
 app.MapControllers();
 
 app.Run();
