@@ -95,9 +95,11 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
+        
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(
-                builder.Configuration["JWT:SigningKey"]))
+                builder.Configuration["JWT:SigningKey"] ??
+                throw new ArgumentNullException("JWT:SigningKey not found"))),
     };
 });
 
