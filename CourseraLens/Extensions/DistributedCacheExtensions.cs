@@ -6,9 +6,9 @@ namespace CourseraLens.Extensions;
 
 public static class DistributedCacheExtensions
 {
-    public static bool TryGetValue<T>( 
+    public static bool TryGetValue<T>(
         this IDistributedCache cache,
-    string key,
+        string key,
         out T? value)
     {
         value = default;
@@ -17,14 +17,15 @@ public static class DistributedCacheExtensions
         value = JsonSerializer.Deserialize<T>(val);
         return true;
     }
-    public static void Set<T>( 
+
+    public static void Set<T>(
         this IDistributedCache cache,
-    string key,
+        string key,
         T value,
-    TimeSpan absoluteExpirationRelativeToNow)
+        TimeSpan absoluteExpirationRelativeToNow)
     {
         var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(value));
-        cache.Set(key, bytes, new DistributedCacheEntryOptions()
+        cache.Set(key, bytes, new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow
         });

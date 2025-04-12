@@ -85,3 +85,11 @@
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Pipelines.Sockets.Unofficial.dll
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/StackExchange.Redis.dll
 /Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/System.Diagnostics.DiagnosticSource.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.AspNetCore.Cryptography.Internal.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.DependencyInjection.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Identity.Core.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Identity.Stores.dll
+/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/bin/Debug/net7.0/Microsoft.Extensions.Logging.dll

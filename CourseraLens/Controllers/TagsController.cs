@@ -37,13 +37,17 @@ public class TagsController : ControllerBase
         if (!ModelState.IsValid)
         {
             var details = new ValidationProblemDetails(ModelState);
-            details.Extensions["traceId"] = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            details.Extensions["traceId"] =
+                Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             if (ModelState.Keys.Any(k => k == "PageSize"))
             {
-                details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.2";
+                details.Type =
+                    "https://tools.ietf.org/html/rfc7231#section-6.6.2";
                 details.Status = StatusCodes.Status501NotImplemented;
-                return new ObjectResult(details) { StatusCode = StatusCodes.Status501NotImplemented };
+                return new ObjectResult(details)
+                    { StatusCode = StatusCodes.Status501NotImplemented };
             }
+
             details.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
             details.Status = StatusCodes.Status400BadRequest;
             return new BadRequestObjectResult(details);
@@ -63,17 +67,17 @@ public class TagsController : ControllerBase
             input.SortOrder,
             input.FilterQuery
         }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })}";
-        if (!_memoryCache.TryGetValue<Tag[]>(cacheKey, out result))
+        if (!_memoryCache.TryGetValue(cacheKey, out result))
         {
             query = query
                 .OrderBy($"{input.SortColumn} {input.SortOrder}")
                 .Skip(input.PageIndex * input.PageSize)
                 .Take(input.PageSize);
-            
+
             result = await query.ToArrayAsync();
             _memoryCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
         }
-        
+
         return new RestDto<Tag[]>
         {
             Data = result,

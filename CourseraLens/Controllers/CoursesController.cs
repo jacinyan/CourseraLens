@@ -14,8 +14,8 @@ namespace CourseraLens.Controllers;
 public class CoursesController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
-    private readonly ILogger<CoursesController> _logger;
     private readonly IDistributedCache _distributedCache;
+    private readonly ILogger<CoursesController> _logger;
 
     public CoursesController(ApplicationDbContext context,
         ILogger<CoursesController> logger,
@@ -47,17 +47,17 @@ public class CoursesController : ControllerBase
             input.FilterQuery
         }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })}";
         // See extension method
-        if (!_distributedCache.TryGetValue<Course[]>(cacheKey, out result))
+        if (!_distributedCache.TryGetValue(cacheKey, out result))
         {
             query = query
                 .OrderBy($"{input.SortColumn} {input.SortOrder}")
                 .Skip(input.PageIndex * input.PageSize)
-                .Take(input.PageSize); 
-            
+                .Take(input.PageSize);
+
             result = await query.ToArrayAsync();
             _distributedCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
         }
-        
+
         return new RestDto<Course[]>
         {
             Data = result,
