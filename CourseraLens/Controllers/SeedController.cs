@@ -1,16 +1,18 @@
 using System.Globalization;
+using CourseraLens.Constants;
 using CourseraLens.Models;
 using CourseraLens.Models.CSV;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseraLens.Controllers;
 
 [Authorize]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 [ApiController]
 public class SeedController : ControllerBase
 {
@@ -18,20 +20,27 @@ public class SeedController : ControllerBase
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<SeedController> _logger;
 
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<IdentityUser> _userManager; 
+
     public SeedController(
         ApplicationDbContext context,
         IWebHostEnvironment env,
-        ILogger<SeedController> logger)
+        ILogger<SeedController> logger,
+        RoleManager<IdentityRole> roleManager,
+        UserManager<IdentityUser> userManager) 
     {
         _context = context;
         _env = env;
         _logger = logger;
+        _roleManager = roleManager;
+        _userManager = userManager;
     }
-    
 
-    [HttpPut(Name = "Seed")]
+
+    [HttpPut]
     [ResponseCache(CacheProfileName = "NoCache")]
-    public async Task<IActionResult> Put()
+    public async Task<IActionResult> CourseData()
     {
         var config = new CsvConfiguration(CultureInfo.GetCultureInfo("en-AU"))
         {
@@ -196,6 +205,57 @@ public class SeedController : ControllerBase
             TagsAdded = tagsAdded,
             RelationshipsAdded = relationshipsAdded,
             SkippedRows = skippedRows
+        });
+    }
+
+    [HttpPost]
+    [ResponseCache(NoStore = true)]
+    public async Task<IActionResult> AuthData()
+    {
+        var rolesCreated = 0;
+        var usersAddedToRoles = 0;
+        if (!await _roleManager.RoleExistsAsync(RoleNames.Curator))
+        {
+            await _roleManager.CreateAsync(
+                new IdentityRole(RoleNames.Curator));
+            rolesCreated++;
+        }
+
+        if (!await _roleManager.RoleExistsAsync(RoleNames.Admin))
+        {
+            await _roleManager.CreateAsync(
+                new IdentityRole(RoleNames.Admin));
+            rolesCreated++;
+        }
+
+        var testCurator = await _userManager
+            .FindByNameAsync("TestCurator");
+        if (testCurator != null
+            && !await _userManager.IsInRoleAsync(
+                testCurator, RoleNames.Curator))
+        {
+            await _userManager.AddToRoleAsync(testCurator,
+                RoleNames.Curator);
+            usersAddedToRoles++;
+        }
+
+        var testAdmin = await _userManager
+            .FindByNameAsync("TestAdmin");
+        if (testAdmin != null
+            && !await _userManager.IsInRoleAsync(
+                testAdmin, RoleNames.Admin))
+        {
+            await _userManager.AddToRoleAsync(
+                testAdmin, RoleNames.Curator);
+            await _userManager.AddToRoleAsync(
+                testAdmin, RoleNames.Admin);
+            usersAddedToRoles++;
+        }
+
+        return new JsonResult(new
+        {
+            RolesCreated = rolesCreated,
+            UsersAddedToRoles = usersAddedToRoles
         });
     }
 }

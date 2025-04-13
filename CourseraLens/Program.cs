@@ -248,10 +248,11 @@ app.MapGet("/error/test",
 //     {
 //         return Results.Ok();
 //     });
-app.MapGet("/auth/test/1",
-    [Authorize]
-    [EnableCors("AnyOrigin")]
-    [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
+// app.MapGet("/auth/test/1",
+//     [Authorize]
+//     [EnableCors("AnyOrigin")]
+//     [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
+
 app.MapControllers();
 
 app.Run();
