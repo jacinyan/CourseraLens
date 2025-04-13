@@ -142,4 +142,37 @@ public class CoursesController : ControllerBase
             }
         };
     }
+    
+    [HttpGet("{id}")]
+    [ResponseCache(CacheProfileName = "Any-60")]
+    // public async Task<RestDto<Course?>> GetCourse(int id)
+    // {
+    //     _logger.LogInformation(CustomLogEvents.BoardGamesController_Get,
+    //         "GetBoardGame method started.");
+    //     Course? result = null;
+    //     var cacheKey = $"GetBoardGame-{id}";
+    //     if (!_distributedCache.TryGetValue<Course>(cacheKey, out result))
+    //     {
+    //         result = await _context.Courses.FirstOrDefaultAsync(bg => bg.Id
+    //              == id);
+    //         _distributedCache.Set(cacheKey, result, new TimeSpan(0, 0, 30));
+    //     }
+    //     return new RestDto<Course?>()
+    //     {
+    //         Data = result,
+    //         PageIndex = 0,
+    //         PageSize = 1,
+    //         ResultCount = result != null ? 1 : 0,
+    //         Links = new List<LinkDto> {
+    //             new LinkDto(
+    //                 Url.Action(
+    //                     null,
+    //                     "BoardGames",
+    //                     new { id },
+    //                     Request.Scheme)!,
+    //                 "self",
+    //                 "GET"),
+    //         }
+    //     };
+    // }
 }
