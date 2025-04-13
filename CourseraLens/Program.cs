@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using CourseraLens.Constants;
 using CourseraLens.Models;
 using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -241,18 +242,25 @@ app.MapGet("/error/test",
 //         }; 
 //         return Results.Ok();
 //     });
-
 // app.MapGet("/cache/test/2",
 //     [EnableCors("AnyOrigin")]
 //     (HttpContext context) =>
 //     {
 //         return Results.Ok();
 //     });
+
 // app.MapGet("/auth/test/1",
 //     [Authorize]
 //     [EnableCors("AnyOrigin")]
 //     [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
-
+app.MapGet("/auth/test/2",
+    [Authorize(Roles = RoleNames.Curator)]
+    [EnableCors("AnyOrigin")]
+    [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
+app.MapGet("/auth/test/3",
+    [Authorize(Roles = RoleNames.Admin)]
+    [EnableCors("AnyOrigin")]
+    [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
 app.MapControllers();
 
 app.Run();

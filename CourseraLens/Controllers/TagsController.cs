@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Linq.Dynamic.Core;
 using System.Text.Json;
 using CourseraLens.Attributes;
+using CourseraLens.Constants;
 using CourseraLens.DTO;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -110,7 +111,7 @@ public class TagsController : ControllerBase
         };
     }
     
-    [Authorize]
+    [Authorize(Roles = RoleNames.Curator)]
     [HttpPost(Name = "UpdateTag")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Tag?>> Post(TagDto model)
@@ -145,7 +146,7 @@ public class TagsController : ControllerBase
         };
     }
     
-    [Authorize]
+    [Authorize(Roles = RoleNames.Admin)]
     [HttpDelete(Name = "DeleteTag")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Tag?>> Delete(int id)

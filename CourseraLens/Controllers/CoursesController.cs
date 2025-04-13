@@ -1,5 +1,6 @@
 using System.Linq.Dynamic.Core;
 using System.Text.Json;
+using CourseraLens.Constants;
 using CourseraLens.DTO;
 using CourseraLens.Extensions;
 using CourseraLens.Models;
@@ -74,7 +75,7 @@ public class CoursesController : ControllerBase
         };
     }
     
-    [Authorize]
+    [Authorize(Roles = RoleNames.Curator)]
     [HttpPost(Name = "UpdateCourse")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Course?>> Post(CourseDto model)
@@ -111,7 +112,7 @@ public class CoursesController : ControllerBase
         };
     }
     
-    [Authorize]
+    [Authorize(Roles = RoleNames.Admin)]
     [HttpDelete(Name = "DeleteCourse")]
     [ResponseCache(CacheProfileName = "NoCache")]
     public async Task<RestDto<Course?>> Delete(int id)

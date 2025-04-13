@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseraLens.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("[controller]/[action]")]
 [ApiController]
 public class SeedController : ControllerBase
@@ -21,14 +21,14 @@ public class SeedController : ControllerBase
     private readonly ILogger<SeedController> _logger;
 
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<IdentityUser> _userManager; 
+    private readonly UserManager<ApiUser> _userManager; 
 
     public SeedController(
         ApplicationDbContext context,
         IWebHostEnvironment env,
         ILogger<SeedController> logger,
         RoleManager<IdentityRole> roleManager,
-        UserManager<IdentityUser> userManager) 
+        UserManager<ApiUser> userManager) 
     {
         _context = context;
         _env = env;

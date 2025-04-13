@@ -1,3 +1,4 @@
+using CourseraLens.Constants;
 using CourseraLens.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseraLens.Controllers;
 
-[Authorize]
+[Authorize(Roles = RoleNames.Admin)]
 [Route("[controller]")]
 [ApiController]
 public class DeseedController : ControllerBase
