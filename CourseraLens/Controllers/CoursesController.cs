@@ -143,8 +143,8 @@ public class CoursesController : ControllerBase
         };
     }
     
-    [HttpGet("{id}")]
-    [ResponseCache(CacheProfileName = "Any-60")]
+    // [HttpGet("{id}")]
+    // [ResponseCache(CacheProfileName = "Any-60")]
     // public async Task<RestDto<Course?>> GetCourse(int id)
     // {
     //     _logger.LogInformation(CustomLogEvents.BoardGamesController_Get,

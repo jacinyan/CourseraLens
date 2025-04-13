@@ -16,12 +16,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging
     .ClearProviders() 
-    .AddSimpleConsole(options => 
-{
-    options.SingleLine = true;
-    options.TimestampFormat = "HH:mm:ss ";
-    options.UseUtcTimestamp = true;
-}) 
+    .AddSimpleConsole() 
     .AddDebug();
 
 // ===== Services =====
