@@ -12,6 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
+
+// using Serilog;
+// using Serilog.Sinks.MSSqlServer;
+// using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging
@@ -159,6 +165,20 @@ builder.Services.AddStackExchangeRedisCache(options =>
         builder.Configuration["Redis:ConnectionString"];
 });
 
+// 
+builder.Host.UseSerilog((ctx, lc) => { 
+        lc.ReadFrom.Configuration(ctx.Configuration);
+        lc.WriteTo.MSSqlServer(
+            connectionString:
+            ctx.Configuration.GetConnectionString("DefaultConnection"),
+            sinkOptions: new MSSqlServerSinkOptions
+            {
+                TableName = "LogEvents",
+                AutoCreateSqlTable = true
+            });
+    },
+    writeToProviders: true);
+
 // ===== Build =====
 var app = builder.Build();
 
@@ -210,11 +230,10 @@ app.Use((context, next) =>
 // ===== Endpoints  =====
 app.MapGet("/error",
     [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)]
-    (HttpContext context) =>
+    (HttpContext context,  [FromServices] ILogger<Program> logger) =>
     {
         var exceptionHandler =
             context.Features.Get<IExceptionHandlerPathFeature>();
-        // TODO: logging, sending notifications, and more
 
         var details = new ProblemDetails
         {
@@ -227,6 +246,10 @@ app.MapGet("/error",
             Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
             Status = StatusCodes.Status500InternalServerError
         };
+        
+        app.Logger.LogError( 
+            CustomLogEvents.ErrorGet,
+        "An unhandled exception occurred.");
 
         return Results.Problem(details);
     });
