@@ -15,9 +15,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 
-// using Serilog;
-// using Serilog.Sinks.MSSqlServer;
-// using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging
@@ -230,7 +227,7 @@ app.Use((context, next) =>
 // ===== Endpoints  =====
 app.MapGet("/error",
     [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)]
-    (HttpContext context,  [FromServices] ILogger<Program> logger) =>
+    (HttpContext context) =>
     {
         var exceptionHandler =
             context.Features.Get<IExceptionHandlerPathFeature>();
@@ -247,6 +244,7 @@ app.MapGet("/error",
             Status = StatusCodes.Status500InternalServerError
         };
         
+        // 
         app.Logger.LogError( 
             CustomLogEvents.ErrorGet,
         "An unhandled exception occurred.");

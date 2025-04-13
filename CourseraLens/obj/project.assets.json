@@ -4734,11 +4734,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/CourseraLens.csproj",
+      "projectUniqueName": "/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/CourseraLens.csproj",
       "projectName": "CourseraLens",
-      "projectPath": "/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/CourseraLens.csproj",
+      "projectPath": "/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/CourseraLens.csproj",
       "packagesPath": "/Users/jiyan/.nuget/packages/",
-      "outputPath": "/Users/jiyan/Developer/Snippets/dotnet/api/CourseraLens/CourseraLens/obj/",
+      "outputPath": "/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/jiyan/.nuget/NuGet/NuGet.Config"
