@@ -1,3 +1,4 @@
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using CourseraLens.Constants;
@@ -14,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging
@@ -172,7 +172,20 @@ builder.Host.UseSerilog((ctx, lc) => {
             {
                 TableName = "LogEvents",
                 AutoCreateSqlTable = true
-            });
+            },
+            columnOptions: new ColumnOptions
+            {
+                AdditionalColumns = new[]
+                {
+                    new SqlColumn
+                    {
+                        ColumnName = "SourceContext",
+                        PropertyName = "SourceContext",
+                        DataType = SqlDbType.NVarChar
+                    }
+                }
+            }
+        );
     },
     writeToProviders: true);
 
