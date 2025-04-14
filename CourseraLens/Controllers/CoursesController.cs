@@ -150,8 +150,8 @@ public class CoursesController : ControllerBase
     [ResponseCache(CacheProfileName = "Any-60")]
     public async Task<RestDto<Course?>> GetCourse(int id)
     {
-        // _logger.LogInformation(CustomLogEvents.CoursesGet,
-        //     "GetCourse method started.");
+        _logger.LogInformation(CustomLogEvents.CoursesGet,
+            "GetCourse method started.");
         
         Course? result = null;
         var cacheKey = $"GetCourse-{id}";
