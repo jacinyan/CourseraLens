@@ -2,7 +2,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using CourseraLens.Attributes;
-
+using DefaultValueAttribute = System.ComponentModel.DefaultValueAttribute;
+    
 namespace CourseraLens.DTO;
 
 public class RequestDto<T> : IValidatableObject

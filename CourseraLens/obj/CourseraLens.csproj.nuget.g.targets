@@ -20,5 +20,7 @@
     <Import Project="$(NuGetPackageRoot)microsoft.extensions.diagnostics.abstractions/9.0.0/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Diagnostics.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.diagnostics.abstractions/9.0.0/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Diagnostics.Abstractions.targets')" />
     <Import Project="$(NuGetPackageRoot)microsoft.extensions.hosting.abstractions/9.0.0/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Hosting.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.hosting.abstractions/9.0.0/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Hosting.Abstractions.targets')" />
     <Import Project="$(NuGetPackageRoot)microsoft.extensions.caching.abstractions/9.0.2/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Caching.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.caching.abstractions/9.0.2/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Caching.Abstractions.targets')" />
+    <Import Project="$(NuGetPackageRoot)hotchocolate.data.entityframework/14.3.0/build/HotChocolate.Data.EntityFramework.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data.entityframework/14.3.0/build/HotChocolate.Data.EntityFramework.targets')" />
+    <Import Project="$(NuGetPackageRoot)hotchocolate.aspnetcore/15.1.3/build/HotChocolate.AspNetCore.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.aspnetcore/15.1.3/build/HotChocolate.AspNetCore.targets')" />
   </ImportGroup>
 </Project>
