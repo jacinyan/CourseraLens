@@ -10,16 +10,20 @@ public class Query
     [UseProjection]
     [UseFiltering]
     [UseSorting]
-    public IQueryable<Course> GetCourses( 
+    public IQueryable<Course> GetCourses(
         [Service] ApplicationDbContext context)
-        => context.Courses;
-    
+    {
+        return context.Courses;
+    }
+
     [Serial]
     [UsePaging]
     [UseProjection]
     [UseFiltering]
     [UseSorting]
-    public IQueryable<Tag> GetTags( 
+    public IQueryable<Tag> GetTags(
         [Service] ApplicationDbContext context)
-        => context.Tags;
+    {
+        return context.Tags;
+    }
 }

@@ -18,7 +18,7 @@ public class CustomLogEvents
 
     // Error
     public const int ErrorGet = 60001;
-    
+
     // Other
     public const int DatabaseQuery = 60310;
     public const int AuthLogin = 60410;

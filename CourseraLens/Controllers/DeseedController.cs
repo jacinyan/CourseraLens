@@ -21,7 +21,7 @@ public class DeseedController : ControllerBase
         _context = context;
         _logger = logger;
     }
-    
+
 
     [HttpDelete]
     public async Task<IActionResult> DeseedDatabase()

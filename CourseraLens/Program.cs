@@ -2,6 +2,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Text;
 using CourseraLens.Constants;
+using CourseraLens.GraphQl;
 using CourseraLens.Models;
 using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,11 +16,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using HotChocolate.AspNetCore;
+using HotChocolate.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging
-    .ClearProviders() 
-    .AddSimpleConsole() 
+    .ClearProviders()
+    .AddSimpleConsole()
     .AddDebug();
 
 // ===== Services =====
@@ -49,8 +52,8 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.ParameterFilter<SortColumnFilter>();
     options.ParameterFilter<SortOrderFilter>();
-    
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme 
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
         Description = "Please enter token",
@@ -59,7 +62,7 @@ builder.Services.AddSwaggerGen(options =>
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
-    
+
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -74,7 +77,6 @@ builder.Services.AddSwaggerGen(options =>
             Array.Empty<string>()
         }
     });
-    
 });
 
 // Cors
@@ -102,6 +104,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+// 
+builder.Services.AddGraphQLServer() 
+    .AddAuthorization() 
+    .AddQueryType<Query>() 
+    .AddMutationType<Mutation>() 
+    .AddProjections() 
+    .AddFiltering() 
+    .AddSorting();
 
 builder.Services.AddIdentity<ApiUser, IdentityRole>(options =>
     {
@@ -131,11 +142,11 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
         ValidateIssuerSigningKey = true,
-        
+
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(
                 builder.Configuration["JWT:SigningKey"] ??
-                string.Empty)),
+                string.Empty))
     };
 });
 
@@ -163,12 +174,12 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 // 
-builder.Host.UseSerilog((ctx, lc) => { 
+builder.Host.UseSerilog((ctx, lc) =>
+    {
         lc.ReadFrom.Configuration(ctx.Configuration);
         lc.WriteTo.MSSqlServer(
-            connectionString:
             ctx.Configuration.GetConnectionString("DefaultConnection"),
-            sinkOptions: new MSSqlServerSinkOptions
+            new MSSqlServerSinkOptions
             {
                 TableName = "LogEvents",
                 AutoCreateSqlTable = true
@@ -227,6 +238,7 @@ app.UseCors();
 app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGraphQL();
 
 // Custom middleware
 app.Use((context, next) =>
@@ -256,11 +268,11 @@ app.MapGet("/error",
             Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
             Status = StatusCodes.Status500InternalServerError
         };
-        
+
         // 
-        app.Logger.LogError( 
+        app.Logger.LogError(
             CustomLogEvents.ErrorGet,
-        "An unhandled exception occurred.");
+            "An unhandled exception occurred.");
 
         return Results.Problem(details);
     });
@@ -294,11 +306,13 @@ app.MapGet("/error/test",
 app.MapGet("/auth/test/2",
     [Authorize(Roles = RoleNames.Curator)]
     [EnableCors("AnyOrigin")]
-    [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
+    [ResponseCache(NoStore = true)]
+    () => Results.Ok("You are authorized!"));
 app.MapGet("/auth/test/3",
     [Authorize(Roles = RoleNames.Admin)]
     [EnableCors("AnyOrigin")]
-    [ResponseCache(NoStore = true)] () => Results.Ok("You are authorized!"));
+    [ResponseCache(NoStore = true)]
+    () => Results.Ok("You are authorized!"));
 app.MapControllers();
 
 app.Run();

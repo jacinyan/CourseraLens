@@ -111,7 +111,7 @@ public class TagsController : ControllerBase
             }
         };
     }
-    
+
     [Authorize(Roles = RoleNames.Curator)]
     [HttpPost(Name = "UpdateTag")]
     [ResponseCache(CacheProfileName = "NoCache")]
@@ -146,7 +146,7 @@ public class TagsController : ControllerBase
             }
         };
     }
-    
+
     [Authorize(Roles = RoleNames.Admin)]
     [HttpDelete(Name = "DeleteTag")]
     [ResponseCache(CacheProfileName = "NoCache")]

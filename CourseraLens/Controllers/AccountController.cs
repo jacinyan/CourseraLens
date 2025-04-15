@@ -60,15 +60,14 @@ public class AccountController : ControllerBase
                         newUser.UserName, newUser.Email);
                     return StatusCode(201,
                         $"User '{newUser.UserName}' has been created.");
-
                 }
             }
 
             var details = new ValidationProblemDetails(ModelState)
-                {
-                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-                    Status = StatusCodes.Status400BadRequest
-                };
+            {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                Status = StatusCodes.Status400BadRequest
+            };
             return new BadRequestObjectResult(details);
         }
         catch (Exception e)
@@ -92,18 +91,21 @@ public class AccountController : ControllerBase
         try
         {
             if (ModelState.IsValid)
-            {
                 if (input.UserName != null)
                 {
-                    var user = await _userManager.FindByNameAsync(input.UserName);
+                    var user =
+                        await _userManager.FindByNameAsync(input.UserName);
                     if (input.Password != null && (user == null
-                                                   || !await _userManager.CheckPasswordAsync(
-                                                       user, input.Password)))
+                                                   || !await _userManager
+                                                       .CheckPasswordAsync(
+                                                           user,
+                                                           input.Password)))
                         throw new Exception("Invalid login attempt.");
                     var signingCredentials = new SigningCredentials(
                         new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(
-                                _configuration["JWT:SigningKey"] ?? string.Empty)),
+                                _configuration["JWT:SigningKey"] ??
+                                string.Empty)),
                         SecurityAlgorithms.HmacSha256);
 
                     var claims = new List<Claim>();
@@ -129,7 +131,6 @@ public class AccountController : ControllerBase
                         StatusCodes.Status200OK,
                         jwtString);
                 }
-            }
 
             var details = new ValidationProblemDetails(ModelState)
             {
