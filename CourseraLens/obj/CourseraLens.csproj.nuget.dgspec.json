@@ -43,6 +43,10 @@
               "target": "Package",
               "version": "[33.0.1, )"
             },
+            "Grpc.AspNetCore": {
+              "target": "Package",
+              "version": "[2.70.0, )"
+            },
             "HotChocolate.AspNetCore": {
               "target": "Package",
               "version": "[14.3.0, )"

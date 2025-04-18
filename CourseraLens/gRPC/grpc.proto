@@ -1,0 +1,14 @@
+syntax = "proto3";
+option csharp_namespace = "CourseraLens.gRPC";
+package Grpc;
+service Grpc {
+  rpc GetCourse (CourseRequest) returns (CourseResponse); 
+}
+message CourseRequest { 
+  int32 id = 1;
+}
+message CourseResponse { 
+  int32 id = 1;
+  string title= 2;
+  int32 studentsEnrolled = 3;
+}

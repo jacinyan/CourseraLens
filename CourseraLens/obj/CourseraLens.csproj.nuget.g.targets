@@ -22,5 +22,6 @@
     <Import Project="$(NuGetPackageRoot)microsoft.extensions.caching.abstractions/9.0.2/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Caching.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.caching.abstractions/9.0.2/buildTransitive/netcoreapp2.0/Microsoft.Extensions.Caching.Abstractions.targets')" />
     <Import Project="$(NuGetPackageRoot)hotchocolate.data.entityframework/14.3.0/build/HotChocolate.Data.EntityFramework.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data.entityframework/14.3.0/build/HotChocolate.Data.EntityFramework.targets')" />
     <Import Project="$(NuGetPackageRoot)hotchocolate.aspnetcore/14.3.0/build/HotChocolate.AspNetCore.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.aspnetcore/14.3.0/build/HotChocolate.AspNetCore.targets')" />
+    <Import Project="$(NuGetPackageRoot)grpc.tools/2.70.0/build/Grpc.Tools.targets" Condition="Exists('$(NuGetPackageRoot)grpc.tools/2.70.0/build/Grpc.Tools.targets')" />
   </ImportGroup>
 </Project>

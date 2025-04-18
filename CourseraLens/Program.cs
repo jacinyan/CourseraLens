@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using CourseraLens.Constants;
 using CourseraLens.GraphQl;
+using CourseraLens.gRPC;
 using CourseraLens.Models;
 using CourseraLens.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -99,13 +100,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Database
+// SqlServer
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// 
+// GraphQLServer
 builder.Services.AddGraphQLServer() 
     .AddAuthorization() 
     .AddQueryType<Query>() 
@@ -113,6 +114,9 @@ builder.Services.AddGraphQLServer()
     .AddProjections() 
     .AddFiltering() 
     .AddSorting();
+
+// grpc
+builder.Services.AddGrpc();
 
 builder.Services.AddIdentity<ApiUser, IdentityRole>(options =>
     {
@@ -239,6 +243,7 @@ app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGraphQL();
+app.MapGrpcService<GrpcService>();
 
 // Custom middleware
 app.Use((context, next) =>
