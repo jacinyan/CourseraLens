@@ -293,3 +293,10 @@
 /Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/System.Collections.Immutable.dll
 /Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/System.IO.Hashing.dll
 /Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Yarp.ReverseProxy.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Google.Protobuf.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Grpc.AspNetCore.Server.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Grpc.AspNetCore.Server.ClientFactory.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Grpc.Core.Api.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Grpc.Net.Client.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Grpc.Net.ClientFactory.dll
+/Users/jiyan/Developer/Projects/CourseraLens/CourseraLens/bin/Debug/net7.0/Grpc.Net.Common.dll
